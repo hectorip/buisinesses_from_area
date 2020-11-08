@@ -2,8 +2,9 @@ import googlemaps
 import json
 import requests
 import time
+import os
 from t import types
-api_key = ''
+api_key = os.getenv("GOOGLE_API_KEY")
 client = googlemaps.Client(key=api_key)
 
 areas = {
@@ -39,8 +40,7 @@ def read_page(lat, long, t, next_page=None, page=0, r=475, a=""):
             print("error")
             return
     else:
-        places = client.places(
-            query="",
+        places = client.places_nearby(
             type=t,
             location="{},{}".format(lat, long),
             radius=r

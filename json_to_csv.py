@@ -22,7 +22,7 @@ for f in os.listdir(d):
 
 print("Total places: {}".format(len(places)))
 
-
+k = os.getenv("GOOGLE_API_KEY")
 with open("result/places.csv", "w", encoding='utf8') as rf:
     writer = csv.writer(rf)
     writer.writerow([
@@ -39,7 +39,7 @@ with open("result/places.csv", "w", encoding='utf8') as rf:
             "https://www.google.com/maps/search/?api=1&query={},{}".format(lat, long),
             lat,
             long,
-            "https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference={}key=AIzaSyBJllAe7ICAfNugS45-BpPLizkw-dFFR7s".format(ref) if ref else "",
+            "https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference={}key={}".format(ref, k) if ref else "",
             p.get("place_id"),
         ]
         writer.writerow(row)
