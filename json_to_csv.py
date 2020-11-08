@@ -1,7 +1,9 @@
 import csv
 import json
 import os
-
+from shapely.geometry import Point, Polygon
+from poly import polygon, poly2
+poly = Polygon(poly2)
 d = "data/raw"
 rd = "result"
 
@@ -27,15 +29,23 @@ with open("result/places.csv", "w", encoding='utf8') as rf:
     writer = csv.writer(rf)
     writer.writerow([
         "Nombre", "Dirección",
-        "Tipos de negocio", "Link en maps", "latitud", "longitud", "Foto", "ID Google Places"])
+        "Tipos de negocio", "Estado", "Link en maps", "latitud", "longitud", "Foto", "ID Google Places"])
     for i, p in places.items():
+      
         ref = p.get("photos", [{}])[0].get("photo_reference")
         lat =  p.get("geometry").get("location").get("lat")
         long =  p.get("geometry").get("location").get("lng")
+        pt = Point(lat, long)
+        if not poly.contains(pt):
+            print("Fuera {}: ".format(p.get("formatted_address") or p.get("vicinity")))
+            continue
+        p.get("types").remove("establishment")
+        p.get("types").remove("point_of_interest")
         row = [
             p.get("name"),
             p.get("formatted_address") or p.get("vicinity"),
-            ",".join(p.get("types")),
+            ", ".join(p.get("types")),
+            p.get("business_status"),
             "https://www.google.com/maps/search/?api=1&query={},{}".format(lat, long),
             lat,
             long,
